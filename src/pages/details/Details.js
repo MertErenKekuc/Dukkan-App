@@ -1,77 +1,36 @@
-import React, { useState, useEffect } from 'react';
-import { SafeAreaView, View, Text, Image, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
-import axios from 'axios';
-import { Linking } from 'react-native';
-import styles from './Details.style';
-import { useRoute } from '@react-navigation/native';
+import React from "react";
+import { View, Text, Image } from "react-native";
+import Error from "../../components/Error/Error";
+import Loading from "../../components/Loading/Loading";
+import {API_URL} from "@env"
 
+import styles from './Details.style'
+import useFetch from "../../hooks/useFetch/useFetch";
 
-const Details = () => {
-  const route = useRoute();
-  const [meal, setMeal] = useState(null);
+function Details ({route}) {
 
-  useEffect(() => {
-    fetchData();
-  }, [route.params.mealName]);
+    const {id} = route.params
+    const{loading, error, data} = useFetch(`${API_URL}/${id}`)
 
-  const fetchData = async () => {
-    try {
-      const mealName = route.params.mealName;
-      const url = `https://www.themealdb.com/api/json/v1/1/search.php?s=${mealName}`;
-
-      const response = await axios.get(url);
-      const meals = response.data.meals || [];
-      if (meals.length > 0) {
-        setMeal(meals[0]);
+    if (loading) {
+        return <Loading />
       }
-    } catch (error) {
-      console.error('Error fetching data:', error);
+      
+    if(error) {
+       return <Error />
     }
-  };
 
-  if (!meal) {
-    return null;
-  }
 
-  const renderIngredient = (item) => (
-    <Text style={styles.ingredient}>{item}</Text>
-  );
-
-  const openYoutubeLink = () => {
-    if (meal.strYoutube) {
-      Linking.openURL(meal.strYoutube);
-    } else {
-      console.warn('Youtube link not available for this meal.');
-    }
-  };
-
-  return (
-    <SafeAreaView style={styles.container}>
-      <FlatList
-        ListHeaderComponent={
-          <View style={styles.mealItem}>
-            <Image source={{ uri: meal.strMealThumb }} style={styles.mealImage} />
-            <View style={styles.mealNameContainer}>
-              <Text style={styles.mealName}>{meal.strMeal}</Text>
-              <Text style={styles.mealCategory}>{meal.strCategory}</Text>
+    return(
+        <View style={styles.container}>
+            <View style={styles.body_container}>
+                <Image source={{uri: data.image}} style={styles.image}/>
+                <Text style={styles.title}>{data.title}</Text>
+                <Text style={styles.description}>{data.description}</Text>
+                <Text style={styles.price}>{data.price} $</Text>
             </View>
-          </View>
-        }
-        data={meal.strIngredientArray}
-        renderItem={({ item }) => renderIngredient(item)}
-        keyExtractor={(item, index) => index.toString()}
-        ListFooterComponent={
-          <>
-            <TouchableOpacity onPress={openYoutubeLink} style={[styles.youtubeButton, { backgroundColor: 'red' }]}>
-              <Text style={styles.youtubeButtonText}>Watch on Youtube</Text>
-            </TouchableOpacity>
-            <Text style={[styles.instructions, { marginTop: 20 }]}>{meal.strInstructions}</Text>
-          </>
-        }
-      />
-    </SafeAreaView>
-  );
+        </View>
+    )
 }
 
-export default Details;
-
+export default Details

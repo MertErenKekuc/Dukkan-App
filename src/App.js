@@ -1,36 +1,36 @@
-import React from 'react';
+// In App.js in a new project
+
+import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import CategoriesScreen from './pages/categories/Categories';
-import MealsScreen from './pages/meals/Meals'
-import DetailsScreen from './pages/details/Details'
+import Products from './pages/Products'
+import Details from './pages/Details'
 
 const Stack = createNativeStackNavigator();
 
 function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator
-        screenOptions={{
-          headerTitleAlign: 'center',
-          headerTintColor: 'orange',
-          headerTitleStyle: {
-            fontWeight: 'bold',
-          },
-        }}
-      >
+      <Stack.Navigator>
         <Stack.Screen 
-          name="Categories" 
-          component={CategoriesScreen} options={{ title: 'Categories' }} />
-        <Stack.Screen
-          name="Meals"
-          component={MealsScreen}
-        />
-        <Stack.Screen
-          name="Details"
-          component={DetailsScreen}
-        />
+        name="ProductsPage" 
+        component={Products}
+        options={{
+          title: 'Dukkan',
+          headerTitleAlign: 'center',
+          headerStyle : {backgroundColor: '#a09e9e'},
+          headerTintColor: 'black',
+        }} />
+        <Stack.Screen 
+        name="DetailsPage" 
+        component={Details} 
+        options={{
+          title: 'Detay',
+          headerTitleAlign: 'center',
+          headerStyle : {backgroundColor: '#a09e9e'},
+          headerTintColor: 'black',
+        }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
